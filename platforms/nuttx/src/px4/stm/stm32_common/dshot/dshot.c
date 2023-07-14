@@ -113,7 +113,8 @@ static int _channels_init_mask = 0;
 
 // We only support capture on the first timer (usually 4 channels) for now.
 static uint32_t _motor_to_capture = 0;
-static int32_t _erpms[4] = {};
+static int32_t _erpms[4] = {0,0,0,0};
+static int32_t _erpms_last[4] = {};
 
 static void(*_erpm_callback)(int32_t[], size_t, void *) = NULL;
 static void *_erpm_callback_context = NULL;
@@ -505,16 +506,19 @@ void process_capture_results(void *arg)
 
 	if (period == 0) {
 		// If the parsing failed, we get 0.
-		_erpms[_motor_to_capture] = 0;
+		// _erpms[_motor_to_capture] = 0;
+		_erpms[_motor_to_capture] = _erpms_last[_motor_to_capture];
 
 	} else if (period == 65408) {
 		// For still, we get this magic 65408 value.
-		_erpms[_motor_to_capture] = 0;
+		// _erpms[_motor_to_capture] = 0;
+		_erpms[_motor_to_capture] = _erpms_last[_motor_to_capture];
 
 	} else {
 		// from period in us to eRPM
 		_erpms[_motor_to_capture] = 1000000 * 60 / period;
 	}
+  _erpms_last[_motor_to_capture] = _erpms[_motor_to_capture];
 
 	for (unsigned channel = 0; channel < MAX_TIMER_IO_CHANNELS; channel++) {
 		if (_channels_init_mask & (1 << channel)) {

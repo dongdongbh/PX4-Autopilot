@@ -628,7 +628,9 @@ void DShot::erpm(int32_t erpms[], size_t num_erpms)
 	esc_status.counter = _esc_status_counter++;
 	esc_status.esc_count = num_erpms;
 	esc_status.esc_connectiontype = esc_status_s::ESC_CONNECTION_TYPE_DSHOT;
-	esc_status.esc_armed_flags = _outputs_on;
+	// esc_status.esc_armed_flags = _outputs_on;
+    esc_status.esc_armed_flags = (1 << esc_status.esc_count) - 1;
+    esc_status.esc_online_flags = (1 << esc_status.esc_count) - 1;
 
 	for (unsigned i = 0; i < num_erpms && i < esc_status_s::CONNECTED_ESC_MAX; ++i) {
 		esc_status.esc[i].timestamp = hrt_absolute_time();

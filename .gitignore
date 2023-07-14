@@ -5,6 +5,7 @@
 *~
 .*.swp
 .context
+.cache/*
 .cproject
 .DS_Store
 .gdbinit
